@@ -1,4 +1,4 @@
-package com.cydeo.tests.d3;
+package com.cydeo.tests.day04_path_jsonpath;
 import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;

@@ -1,9 +1,7 @@
-package com.cydeo.tests.day04;
+package com.cydeo.tests.day04_path_jsonpath;
 
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import org.apache.http.HttpStatus;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static io.restassured.RestAssured.*;
 import static org.junit.jupiter.api.Assertions.*;
