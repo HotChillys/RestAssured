@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import static io.restassured.RestAssured.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class Tasks {
+public class Tasks_hw {
 
     String url = "https://jsonplaceholder.typicode.com/posts";
 

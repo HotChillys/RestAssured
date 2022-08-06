@@ -5,6 +5,8 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import static org.hamcrest.Matchers.*;
 import io.restassured.response.Response;
+import org.apache.http.HttpStatus;
+import org.apache.http.protocol.HTTP;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,7 +46,60 @@ public class HRApiGetTest {
         assertEquals(ContentType.JSON.toString(), response.contentType());
 
         assertTrue(response.body().asString().contains("Europe"));
+    }
 
+
+    /*
+     * Given accept type is json
+     And Path param "region_id" value is 1
+     When user send get request to /ords/hr/regions/{region_id}
+     Status code should be 200
+     Content type should be "application/json"
+     And body should contain "Europe"
+     */
+    @DisplayName("GET region/{region_id} / path param")
+    @Test
+    public void getSingleRegionPathParamTest(){
+
+        Response response = given().log().all().accept(ContentType.JSON)
+                .and().pathParam("region_id", 1)
+                .when().get("/regions/{region_id}");
+
+        response.prettyPrint();
+
+        assertEquals(HttpStatus.SC_OK, response.statusCode());
+
+        assertEquals("application/json", response.contentType());
+
+        assertTrue(response.body().asString().contains("Europe"));
+    }
+
+
+/*
+ * Given accept type is json
+ * And query param q={"region_name": "Americas"}
+ * When user send get request to /ords/hr/regions
+ * Status code should be 200
+ * Content type should be "application/json"
+ * And region name should be "Americas"
+ * And region id should be "2"
+ */
+
+    @DisplayName("GET /region?q={\"region_name\": \"Americas\"}")
+    @Test
+    public void getRegionWithQueryParamTest(){
+
+        Response response = given().log().all().accept(ContentType.JSON)
+                .and().queryParam("q", "{\"region_name\": \"Americas\"}")
+                .when().get("/regions");
+
+        response.prettyPrint();
+
+        assertEquals(HttpStatus.SC_OK, response.statusCode());
+        assertEquals("application/json", response.contentType());
+
+        assertTrue(response.body().asString().contains("Americas"));
+        assertTrue(response.body().asString().contains("2"));
 
     }
 
