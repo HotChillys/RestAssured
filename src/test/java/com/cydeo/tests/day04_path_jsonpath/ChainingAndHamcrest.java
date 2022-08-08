@@ -36,7 +36,7 @@ public class ChainingAndHamcrest {
         given().accept(ContentType.JSON)
                 .pathParams("id", 15)
                 .when().get(url + "/api/spartans/{id}")
-                .then().statusCode(200)
+                .then().assertThat().statusCode(200)
                 .and().assertThat().contentType("application/json");
     }
 
@@ -49,7 +49,7 @@ public class ChainingAndHamcrest {
                 .when().get(url + "/api/spartans/{id}")
                 .then().assertThat().statusCode(200)
                 .and().assertThat().contentType("application/json")
-                .and().assertThat().body( "id", equalTo(15), "name", equalTo("Meta"), "gender", equalTo("Female"), "phone", equalTo(1938695106L) );
+                .and().assertThat().body("id", equalTo(15), "name", equalTo("Meta"), "gender", equalTo("Female"), "phone", equalTo(1938695106));
 
 
     }
