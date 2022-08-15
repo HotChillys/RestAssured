@@ -115,12 +115,36 @@ public class SpartanPostTest extends SpartanTestBase {
     public void addNewSpartanAsPojoTest() {
 
         Spartan newSpartan = new Spartan();
-        newSpartan.setName("Male");
-        newSpartan.setGender("TestYou");
+        newSpartan.setName("TestYou");
+        newSpartan.setGender("Female");
         newSpartan.setPhone(1234567425L);
 
+        Response response = given().accept(ContentType.JSON)
+                .and().contentType(ContentType.JSON)
+                .and().body(newSpartan)
+                .when().post("/spartans");
+        response.prettyPrint();
 
+        //verify status code
+        System.out.println("status code = " + response.statusCode());
+        assertThat(response.statusCode(), is(201));
 
+        //verify header
+        assertThat(response.contentType(), is("application/json"));
+
+        //assign response to json path
+        JsonPath jsonPath = response.jsonPath();
+        assertThat(jsonPath.getString("success"), equalTo("A Spartan is Born!"));
+        assertThat(jsonPath.getString("data.name"), is(newSpartan.getName()));
+        assertThat(jsonPath.getString("data.gender"), is(newSpartan.getGender()));
+        assertThat(jsonPath.getLong("data.phone"), is(newSpartan.getPhone()));
+
+        //extract the id of newly added spartan
+        int spartanId = jsonPath.getInt("data.id");
+        System.out.println("spartanId = " + spartanId);
+
+        //delete the spartan after post
+        SpartansRestUtil.deleteSpartanById(spartanId);
 
     }
 
