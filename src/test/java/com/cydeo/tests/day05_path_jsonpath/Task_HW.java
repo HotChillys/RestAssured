@@ -10,10 +10,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
-
+import static org.hamcrest.Matchers.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -53,6 +55,7 @@ public class Task_HW extends HRApiTestBase {
         assertEquals(2, jsonPath.getInt("region_id"));
 
 
+
     }
 
 
@@ -83,16 +86,29 @@ public class Task_HW extends HRApiTestBase {
         JsonPath jsonPath = response.jsonPath();
 
         List<String> jobIds = jsonPath.getList("items.job_id");
-
+        //option 1  my way
         for (String eachJobs : jobIds) {
             assertTrue(eachJobs.startsWith("SA"));
         }
+        // option 2 Mehmet
+        List<String> afterFilter = jobIds.stream().filter(each -> each.startsWith("SA")).collect(Collectors.toList());
+        assertEquals(afterFilter.size(), jobIds.size());
+        // option 3 Mehmet
+        assertTrue(jobIds.stream().allMatch(each -> each.startsWith("SA")));
 
+
+
+
+        // all department_id is 80
         List<Integer> departmentIds = jsonPath.getList("items.department_id");
-
+        //option 1
         for (Integer eachId : departmentIds) {
             assertEquals(80, eachId);
         }
+        //option 2 Mehmet
+        assertTrue(departmentIds.stream().allMatch(each -> each == 80));
+
+
 
         assertEquals(25, jsonPath.getInt("count"));
 
@@ -118,7 +134,10 @@ public class Task_HW extends HRApiTestBase {
 
         Response response = given().accept(ContentType.JSON)
                 .and().queryParam("q", "{\"region_id\":3}")
-                .when().get("/countries");
+                .when().get("/countries")
+                .then().body("items.country_name", hasItems("Australia", "China", "India", "Japan", "Malaysia", "Singapore"))
+                .and().body("items.country_name", containsInRelativeOrder("Australia", "China", "India", "Japan", "Malaysia", "Singapore"))
+                .extract().response();
 
         //Then status code is 200
         assertEquals(HttpStatus.SC_OK, response.statusCode());
@@ -131,6 +150,9 @@ public class Task_HW extends HRApiTestBase {
             assertEquals(3, eachRegionId);
         }
 
+        // or
+        assertTrue(allRegionId.stream().allMatch(each -> each == 3));
+
         //And count is 6
         assertEquals(6, jsonPath.getInt("count"));
 
@@ -140,9 +162,10 @@ public class Task_HW extends HRApiTestBase {
         //* - And Country_name are Australia,China,India,Japan,Malaysia,Singapore
         List<String> countryList = jsonPath.getList("items.country_name");
         List<String> expectedCountryList = Arrays.asList("Australia", "China", "India", "Japan", "Malaysia", "Singapore");
-        Collections.sort(countryList);
-        Collections.sort(expectedCountryList);
         assertEquals(expectedCountryList, countryList);
+        // ot we verify it with hamcrest using Matcher in the beginning
+
+
 
 
     }
