@@ -1,9 +1,8 @@
 package com.cydeo.tests.day10_db_vs_api_put_delete;
 
-import com.cydeo.util.SpartanTestBase;
+import com.cydeo.util.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import com.cydeo.util.SpartansRestUtil;
 import com.cydeo.util.SpartanTestBase;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
@@ -48,7 +47,7 @@ public class SpartanAPIAndDBValidationTest extends SpartanTestBase {
 
         Map<String, Object> postRequestMap = new HashMap<>();
         postRequestMap.put("gender", "Male");
-        postRequestMap.put("name", "PostVSDatabase");
+        postRequestMap.put("name", "Moradil");
         postRequestMap.put("phone", 9234567425L);
 
         Response response = given().accept(ContentType.JSON)
@@ -60,6 +59,35 @@ public class SpartanAPIAndDBValidationTest extends SpartanTestBase {
 
         assertThat(response.statusCode(), equalTo(201));
         assertThat(response.contentType(), equalTo("application/json"));
+        assertThat(response.jsonPath().getString("success"), equalTo("A Spartan is Born!"));
+        assertThat(response.path("success"), equalTo("A Spartan is Born!"));
+
+        int newSpartanID = response.jsonPath().getInt("data.id");
+        System.out.println("new spartan ID = " + newSpartanID);
+
+        String query = "SELECT name, gender, phone FROM spartans WHERE spartan_id = " + newSpartanID;
+
+        String dbUrl = ConfigurationReader.getProperty("spartan.db.url") ;
+        String dbUser = ConfigurationReader.getProperty("spartan.db.username");
+        String dbPwr = ConfigurationReader.getProperty("spartan.db.password");
+
+        // connect to database
+        DBUtils.createConnection(dbUrl, dbUser, dbPwr);
+        // run the query and get result as Map object
+        Map<String, Object> dbMap = DBUtils.getRowMap(query);
+        System.out.println("db Map = " + dbMap);
+
+        //assert/validate data from database Matches data from post request
+        assertThat(dbMap.get("NAME"), equalTo(postRequestMap.get("name")));
+        assertThat(dbMap.get("GENDER"), equalTo(postRequestMap.get("gender")));
+        assertThat(dbMap.get("PHONE"), equalTo(postRequestMap.get("phone").toString()));
+
+
+
+
+        // disconnect from database
+        DBUtils.destroy();
+
     }
 
 }
