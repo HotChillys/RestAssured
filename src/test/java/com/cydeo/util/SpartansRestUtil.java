@@ -1,9 +1,12 @@
 package com.cydeo.util;
 import com.cydeo.pojo.Spartan;
 import com.github.javafaker.Faker;
+import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
 
 import static io.restassured.RestAssured.*;
 public class SpartansRestUtil {
@@ -32,5 +35,20 @@ public class SpartansRestUtil {
     }
 
 
+    /**
+     * method accepts spartan Id and sends a GET request
+     * @param spartanId
+     * @return is Map object containing json format data
+     */
+    public static Map<String, Object> getSpartanId(int spartanId) {
 
+        Response response = given().accept(ContentType.JSON)
+                .and().pathParam("id", spartanId)
+                .when().get(baseUrl + "/spartans/{id}");
+
+        Map<String, Object> spartanMap = response.as(Map.class);
+
+        return spartanMap;
+
+    }
 }
