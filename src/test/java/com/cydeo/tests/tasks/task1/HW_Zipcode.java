@@ -1,4 +1,4 @@
-package com.cydeo.tests.day08_hamcrest;
+package com.cydeo.tests.tasks.task1;
 
 import com.cydeo.util.ConfigurationReader;
 import io.restassured.http.ContentType;

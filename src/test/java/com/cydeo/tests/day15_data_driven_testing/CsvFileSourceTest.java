@@ -5,27 +5,14 @@ import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
-import com.cydeo.util.ConfigurationReader;
-import io.restassured.http.ContentType;
-import io.restassured.path.json.JsonPath;
-import io.restassured.response.Response;
-import org.apache.http.HttpStatus;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
+
 import java.util.HashMap;
 import java.util.Map;
 
-
-import static io.restassured.RestAssured.*;
 public class CsvFileSourceTest {
 
     @BeforeAll
@@ -34,7 +21,7 @@ public class CsvFileSourceTest {
     }
 
     @ParameterizedTest
-    @CsvFileSource(resources = "/ZipCodes.csv", numLinesToSkip = 1)
+    @CsvFileSource(resources = "/csv_files/ZipCodes.csv", numLinesToSkip = 1)
     public void zipCodeTest(String state, String city, int zipCodeCount) {
 
         Map<String, String> paramsMap = new HashMap<>();
